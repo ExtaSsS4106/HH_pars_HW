@@ -1,0 +1,30 @@
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: hh_pars_db
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: 0000
+    ports:
+      - "5431:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  web:  
+    build: .
+    ports:
+      - "8010:8010"
+    depends_on:
+      - db
+    environment:
+      - DB_NAME=hh_pars_db
+      - DB_USER=root
+      - DB_PASSWORD=0000
+      - DB_HOST=db
+      - DB_PORT=5432
+    volumes:
+      - .:/app  # ← синхронизация кода
+
+
+volumes:
+  postgres_data:
