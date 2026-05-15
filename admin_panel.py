@@ -4,7 +4,7 @@ import django
 import random
 # Указываем путь к настройкам Django
 sys.path.append('/home/exti/Desktop/HDD/some-shit/code/gitReposses/HH_pars_HW')
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'conf.settings')  # Замените на имя вашего проекта
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'conf.settings')
 
 # Инициализируем Django
 django.setup()
@@ -14,6 +14,7 @@ import json
 from main.models import Vacancies, Groups, Specialisation
 from main.hhru_parser import hh_pars
 import time
+
 def start_parsing(time_out_one_circle: int = 500,
                   time_out: int = 150,
                   pages: int = 0,
@@ -22,15 +23,18 @@ def start_parsing(time_out_one_circle: int = 500,
                   ):
     gr = Groups.objects.all()
     parset_data = []
-    for page in pages:
+    
+    if isinstance(pages, int):
+        pages_range = range(pages + 1) 
+    else:
+        pages_range = pages
+    
+    for page in pages_range:
         for i in gr:
             try:
                 scraper = hh_pars.VacancyScraper()
                 scraper.text = f"{i.spec_id.title} {i.title}"
                 scraper.delay = random.randint(delay_from, delay_to)
-                
-                
-
                 scraper.page_end = page
                 data = scraper.scrape_vacancies()
                 
@@ -49,7 +53,7 @@ def start_parsing(time_out_one_circle: int = 500,
                             vacancyId=d['vacancyId'],
                             group_id=group,
                             spec_id=spec,
-                            status = 'active'
+                            status='active'
                         )
                         print(f"Вакансия '{d['title']}' добавлена в базу данных.")
                         parset_data.append(d['vacancyId'])
@@ -59,13 +63,26 @@ def start_parsing(time_out_one_circle: int = 500,
                 print(f"Ошибка при обработке группы '{i.title}': {e}")
             time.sleep(time_out)
         time.sleep(time_out_one_circle)
-    old_vac = Vacancies.objects.exclude(vacancyId__in = parset_data)
-    for v in old_vac:
-        v.status = 'archived'
-        v.save()
+    
+    # Архивируем старые вакансии
+    old_vac = Vacancies.objects.exclude(vacancyId__in=parset_data)
+    updated_count = old_vac.update(status='archived')
+    print(f"Архивировано {updated_count} вакансий")
         
-action = input("Начать парсинг? (y/n): ")
-if action.lower() == 'y':
+action = input("Начать парсинг вакансий или конкретной? (1 - массовый, 2 - по ID): ")
+if action == '1':
     start_parsing()
-else:
-    print("Парсинг отменён.")
+elif action == '2':
+    value = input("Введите ID вакансии: ")
+    try:
+        vacancy_id = int(value)
+        scraper = hh_pars.VacancyScraper()
+        scraper.text = vacancy_id  # ID вакансии для поиска
+        vacancy_data = scraper.get_vacancia()
+        
+        if vacancy_data:
+            print(f"Данные вакансии: {vacancy_data.get('name', 'Не найдено')}")
+        else:
+            print("Вакансия не найдена")
+    except ValueError:
+        print("Ошибка: ID должен быть числом")

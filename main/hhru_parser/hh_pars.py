@@ -151,9 +151,12 @@ class VacancyScraper:
                     page.set_extra_http_headers({
                         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
                     })
-                    
+                    if not self.text:
+                        raise ValueError("text не может быть пустым")
+                    elif type(self.text) != int:
+                        raise TypeError(f"Ожидается int, получен {type(self.text)}")
                     # Переходим на страницу
-                    page.goto(f"{self.uri}?page={page_count}{'&text=' + self.text if self.text else ''}")
+                    page.goto(f"{self.uri}{'?text=' + self.text if self.text else ''}")
                     
                     # Ждём загрузки контента
                     page.wait_for_selector("#HH-Lux-InitialState", timeout=10000)
