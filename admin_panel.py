@@ -14,7 +14,12 @@ import json
 from main.models import Vacancies, Groups, Specialisation
 from main.hhru_parser import hh_pars
 import time
-def start_parsing(time_out_one_circle: int = 500, time_out: int = 150, pages: int = 0, delay_from: int = 40, delay_to: int = 120):
+def start_parsing(time_out_one_circle: int = 500,
+                  time_out: int = 150,
+                  pages: int = 0,
+                  delay_from: int = 40, 
+                  delay_to: int = 120
+                  ):
     gr = Groups.objects.all()
     parset_data = []
     for page in pages:

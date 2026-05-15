@@ -126,7 +126,75 @@ class VacancyScraper:
             print(f"✅ Собрано {len(result)} вакансий")
             browser.close()
             return result
+    def get_vacancia(self):
+        """HH-Lux-InitialState"""
+        with sync_playwright() as p:
+                    # headless=True - браузер не показывается
+                    browser = p.chromium.launch(headless=True)
+                    page = browser.new_page()
+                    
+                    # Собираем все перехваченные данные
+                    api_data: list = []
+                    
+                    def capture_api(response):
+                        if "api.hh.ru/vacancies" in response.url:
+                            try:
+                                data = response.json()
+                                if 'items' in data:
+                                    api_data.extend(data['items'])
+                                    print(f"  Перехвачено {len(data['items'])} вакансий")
+                            except:
+                                pass
+                    page.on("response", capture_api)
+                    
+                    # Устанавливаем заголовки
+                    page.set_extra_http_headers({
+                        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+                    })
+                    
+                    # Переходим на страницу
+                    page.goto(f"{self.uri}?page={page_count}{'&text=' + self.text if self.text else ''}")
+                    
+                    # Ждём загрузки контента
+                    page.wait_for_selector("#HH-Lux-InitialState", timeout=10000)
+                    page.wait_for_load_state("networkidle", timeout=10000)
+                    time.sleep(3) 
 
+                    try:
+                        html_content = page.content() 
+                        with open(f"{self.target}/page.html", "w", encoding="utf-8") as f:
+                            f.write(html_content)  # Сохраняем HTML для отладки
+                        soup = BeautifulSoup(html_content, 'html.parser')
+                        template_tag = soup.find('template', id='HH-Lux-InitialState')
+                        
+                        if template_tag:
+                            # Извлекаем JSON из атрибута template_tag.string
+                            json_str = template_tag.string
+                            if json_str:
+                                try:
+                                    data = json.loads(json_str)
+                                    print(f"✅ JSON успешно извлечён!")
+                                    print(f"📊 Ключи в JSON: {list(data.keys())}")
+                                    with open(f"{self.target}/initial_state.json", "w", encoding="utf-8") as f:
+                                        json.dump(data, f, ensure_ascii=False, indent=2)
+                                except json.JSONDecodeError as e:
+                                    print(f"❌ Ошибка парсинга JSON: {e}")
+                                    return None
+                            else:
+                                print("❌ Атрибут data-state не найден в теге <template>")
+                        else:
+                            print("❌ Не найден тег <template id='HH-Lux-InitialState'>")
+                    except Exception as e:
+                        print(f"Ошибка при сохранении HTML: {e}")
+                        
+                    vacancy_data = {}
+                    try:
+                        vacancy_data = data.get('vacancyView', {})
+                    except Exception as e:
+                        print(f"❌ Ошибка при извлечении данных из JSON: {e}")
+                    browser.close()
+                    return vacancy_data
+                
     # Установка: pip install playwright && playwright install chromium
     def scrape_vacancies(self):
         data: list = []
