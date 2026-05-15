@@ -9,9 +9,8 @@
 - 📋 Сбор данных о вакансиях с hh.ru
 - 💰 Извлечение информации о зарплате и условиях
 - 🔍 Поиск по ключевым словам и фильтрам
-- 📊 Экспорт данных в различные форматы (CSV, JSON)
+- 📊 Экспорт данных в различные форматы (JSON)
 - ⚙️ Настраиваемые параметры парсинга
-- 🔄 Асинхронная обработка данных
 
 ## Требования
 
@@ -39,60 +38,21 @@ pip install -r requirements.txt
 ### Базовый пример
 
 ```python
-from parser import HHParser
+from hhru_parser import hh_pars
 
 # Инициализация парсера
-parser = HHParser()
-
+scraper = hh_pars.VacancyScraper()
+scraper.text = "Python"
+scraper.page_end = 1
 # Поиск вакансий
-vacancies = parser.search(
-    query="Python",
-    area=1,  # Москва
-    per_page=100
-)
+data = scraper.scrape_vacancies()
 
-# Сохранение результатов
-parser.save_to_csv(vacancies, 'vacancies.csv')
+print(data)
 ```
 
-### Поиск с фильтрами
-
-```python
-# Поиск с дополнительными параметрами
-vacancies = parser.search(
-    query="Data Scientist",
-    salary_from=100000,
-    salary_to=300000,
-    experience="between1And3",
-    schedule="fullTime"
-)
-```
-
-
-## Примеры команд
-
-### Парсинг вакансий по специальности
-
-```bash
-python main.py --query "Python Developer" --area 1 --output vacancies.json
-```
-
-### Экспорт в CSV
-
-```bash
-python main.py --query "Java" --format csv --output java_jobs.csv
-```
 
 ## Примечания
 
 - ⚠️ Уважайте правила robots.txt сайта hh.ru
 - 🛑 Используйте задержки между запросами
 - 📌 Следите за условиями использования сервиса hh.ru
-
-## Лицензия
-
-MIT License
-
-## Контакты и поддержка
-
-Если у вас возникли вопросы или предложения, создайте Issue в репозитории. 

@@ -11,10 +11,10 @@ RUN apt-get update && apt-get install -y \
     gcc \
     && rm -rf /var/lib/apt/lists/*
 
-COPY requiraraments.txt .
+COPY requirements.txt .
 RUN python manage.py makemigrations main
 RUN python manage.py migrate
-RUN pip install --no-cache-dir -r requiraraments.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
