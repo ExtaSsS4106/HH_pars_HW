@@ -65,4 +65,4 @@ print(data)
 
 
 
-(Презентация)[https://docs.google.com/presentation/d/1Mt8BhVO528cpR4xiZZ13OUIBANFyI5A7uR1Fr2VjNuU/edit?slide=id.p6#slide=id.p6]
+[Презентация](https://docs.google.com/presentation/d/1Mt8BhVO528cpR4xiZZ13OUIBANFyI5A7uR1Fr2VjNuU/edit?slide=id.p6#slide=id.p6)
