@@ -53,7 +53,20 @@ data = scraper.scrape_vacancies()
 
 print(data)
 ```
+### Пример вывода
 
+```json
+  {
+    "vacancyId": 133006749,
+    "title": "Специалист по кадрам / Ассистент руководителя",
+    "company": "Башкирские Электрические Сети",
+    "salary": "60000",
+    "city": "Уфа",
+    "url": "https://hh.ru/vacancy/133006749",
+    "work_schedule": "fullDay",
+    "publicationTime": 1778591470
+  }
+```
 
 ## Примечания
 
