@@ -60,3 +60,9 @@ print(data)
 - ⚠️ Уважайте правила robots.txt сайта hh.ru
 - 🛑 Используйте задержки между запросами
 - 📌 Следите за условиями использования сервиса hh.ru
+
+
+
+
+
+(Презентация)[https://docs.google.com/presentation/d/1Mt8BhVO528cpR4xiZZ13OUIBANFyI5A7uR1Fr2VjNuU/edit?slide=id.p6#slide=id.p6]
