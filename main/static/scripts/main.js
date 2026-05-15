@@ -132,10 +132,16 @@ function updateVacancyCards(vacancies) {
     `;
     container.appendChild(cardHolder);
   });
+  const spinner = document.getElementById('spinner__');
+  spinner.innerHTML = ``;
 }
 
 function insertLoading() {
+  const spinner = document.getElementById('spinner__');
   const container = document.getElementById('vacancyContainer');
+  spinner.innerHTML = `          <div class="spinner-border text-secondary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>`;
   container.innerHTML = `        
     <div class="card mb-2 bg-dark text-white border-secondary" style="width: 90%;">
       <div class="card-body">

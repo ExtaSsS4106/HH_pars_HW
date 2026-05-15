@@ -24,27 +24,32 @@
   <section>
     <div class="statistic">
       <div class="statistic-btns">
-        <div class="dropdown w-100" data-bs-theme="dark">
-          <button class="btn btn-secondary dropdown-toggle w-100" type="button" id="city" data-bs-toggle="dropdown" aria-expanded="false">
-            Все города
-          </button>
-          <ul class="dropdown-menu w-100" id="cityDropdown">
-            <li><a class="dropdown-item" href="#" data-value="all">Все города</a></li>
-            {% for city in cities %}
-            <li><a class="dropdown-item" href="#" data-value="{{ city }}">{{ city }}</a></li>
-            {% endfor %}
-          </ul>
+        <div class="s-btns">
+          <div class="dropdown w-100" data-bs-theme="dark">
+            <button class="btn btn-secondary dropdown-toggle w-100" type="button" id="city" data-bs-toggle="dropdown" aria-expanded="false">
+              Все города
+            </button>
+            <ul class="dropdown-menu w-100" id="cityDropdown">
+              <li><a class="dropdown-item" href="#" data-value="all">Все города</a></li>
+              {% for city in cities %}
+              <li><a class="dropdown-item" href="#" data-value="{{ city }}">{{ city }}</a></li>
+              {% endfor %}
+            </ul>
+          </div>
+          <div class="dropdown w-100" data-bs-theme="dark">
+            <button class="btn btn-secondary dropdown-toggle w-100" type="button" id="profession" data-bs-toggle="dropdown" aria-expanded="false">
+              Все профессии
+            </button>
+            <ul class="dropdown-menu w-100" id="professionDropdown">
+              <li><a class="dropdown-item" href="#" data-value="all">Все профессии</a></li>
+              {% for profession in professions %}
+              <li><a class="dropdown-item" href="#" data-value="{{ profession }}">{{ profession }}</a></li>
+              {% endfor %}
+            </ul>
+          </div>
         </div>
-        <div class="dropdown w-100" data-bs-theme="dark">
-          <button class="btn btn-secondary dropdown-toggle w-100" type="button" id="profession" data-bs-toggle="dropdown" aria-expanded="false">
-            Все профессии
-          </button>
-          <ul class="dropdown-menu w-100" id="professionDropdown">
-            <li><a class="dropdown-item" href="#" data-value="all">Все профессии</a></li>
-            {% for profession in professions %}
-            <li><a class="dropdown-item" href="#" data-value="{{ profession }}">{{ profession }}</a></li>
-            {% endfor %}
-          </ul>
+        <div id="spinner__">
+
         </div>
       </div>
       <div class="statistic-board">
