@@ -3,7 +3,9 @@ import sys
 import django
 import random
 # Указываем путь к настройкам Django
-sys.path.append('/home/exti/Desktop/HDD/some-shit/code/gitReposses/HH_pars_HW')
+"""'/home/exti/Desktop/HDD/some-shit/code/gitReposses/HH_pars_HW'"""
+current_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(current_dir)
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'conf.settings')
 
 # Инициализируем Django
