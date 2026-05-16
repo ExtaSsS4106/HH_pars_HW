@@ -1,10 +1,82 @@
 import datetime
-
-from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login, logout, get_user_model
+from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from .models import Specialisation, Groups, Vacancies
-import json
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from manager import Manager
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
+import json
+
+manager = Manager()
+
+@login_required(login_url='/login')
+def logout_view(request):
+    logout(request)
+    return redirect('/')
+
+@login_required(login_url='/login')
+def admin(request):
+    return render(request, 'admin/admin.html')
+
+@login_required(login_url='/login')
+@csrf_exempt
+@require_http_methods(["POST"])
+def start_parsing(request):
+    try:
+        data = json.loads(request.body)
+        
+        success = manager.start_parsing(
+            time_out_one_circle=data.get('time_out_first_circle', 500),
+            time_out=data.get('time_out', 150),
+            pages=data.get('pages', 0),
+            delay_from=data.get('delay_from', 40),
+            delay_to=data.get('delay_to', 120)
+        )
+        print(data)
+        return JsonResponse({
+            'success': success,
+            'status': manager.get_status()
+        })
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+
+@login_required(login_url='/login')
+@csrf_exempt
+@require_http_methods(["POST"])
+def stop_parsing(request):
+    success = manager.stop_parsing()
+    return JsonResponse({
+        'success': success,
+        'status': manager.get_status()
+    })
+
+@login_required(login_url='/login')
+@require_http_methods(["GET"])
+def parsing_status(request):
+    return JsonResponse(manager.get_status())
+
+@login_required(login_url='/login')
+@csrf_exempt
+@require_http_methods(["POST"])
+def parse_single_vacancy(request):
+    try:
+        data = json.loads(request.body)
+        vacancy_id = data.get('vacancy_id')
+        
+        if not vacancy_id:
+            return JsonResponse({'success': False, 'error': 'vacancy_id required'})
+        
+        result = manager.parse_single_vacancy(vacancy_id)
+        
+        return JsonResponse({
+            'success': result is not None,
+            'data': result
+        })
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
 
 def home(request):
     spec = Specialisation.objects.all().distinct().order_by('title')

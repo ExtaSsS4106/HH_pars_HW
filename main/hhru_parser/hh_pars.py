@@ -201,7 +201,7 @@ class VacancyScraper:
     # Установка: pip install playwright && playwright install chromium
     def scrape_vacancies(self):
         data: list = []
-        for page in range(0, self.page_end):
+        for page in range(0, self.page_end + 1):
             print(self.text)
             print(f"Обрабатываем страницу {page}...")
             

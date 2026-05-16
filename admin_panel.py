@@ -68,7 +68,52 @@ def start_parsing(time_out_one_circle: int = 500,
     old_vac = Vacancies.objects.exclude(vacancyId__in=parset_data)
     updated_count = old_vac.update(status='archived')
     print(f"Архивировано {updated_count} вакансий")
+def test_parser():
+    """Тест парсера напрямую"""
+    print("\n🔧 ТЕСТ ПАРСЕРА:")
+    
+    # Тест 1: Запрос к hh.ru через requests
+    import requests
+    url = "https://hh.ru/search/vacancy?text=Python"
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
+    try:
+        response = requests.get(url, headers=headers)
+        print(f"  Requests статус: {response.status_code}")
+        print(f"  Длина HTML: {len(response.text)} символов")
+        if "вакансия" in response.text.lower():
+            print("  ✅ hh.ru доступен")
+    except Exception as e:
+        print(f"  ❌ Ошибка requests: {e}")
+    
+    # Тест 2: Запуск вашего парсера
+    try:
+        scraper = hh_pars.VacancyScraper()
+        scraper.text = "Python разработчик"
+        scraper.page_end = 0
         
+        print("  🚀 Запуск scrape_vacancies()...")
+        data = scraper.scrape_vacancies()
+        print(f"  Результат: {len(data)} вакансий")
+        
+        if len(data) > 0:
+            print(f"  Пример: {data[0]}")
+        else:
+            print("  ❌ ПАРСЕР НЕ РАБОТАЕТ")
+            
+            # Проверяем метод внутри парсера
+            print("  🔍 Проверяем get_vacancies_with_playwright...")
+            result = scraper.get_vacancies_with_playwright(0)
+            print(f"    get_vacancies_with_playwright вернул: {type(result)}")
+            if result:
+                print(f"    Длина: {len(result)}")
+            else:
+                print("    ❌ get_vacancies_with_playwright вернул None или пустой список")
+                
+    except Exception as e:
+        print(f"  ❌ Ошибка парсера: {e}")
+        import traceback
+        traceback.print_exc()
+test_parser()
 action = input("Начать парсинг вакансий или конкретной? (1 - массовый, 2 - по ID): ")
 if action == '1':
     start_parsing()
